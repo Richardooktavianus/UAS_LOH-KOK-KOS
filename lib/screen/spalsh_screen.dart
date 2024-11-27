@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'package:kossan/welcome_screen.dart';
+import 'package:kossan/screen/welcome_screen.dart';
 
 void main() {
   runApp(MyApp());

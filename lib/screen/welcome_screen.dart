@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:kossan/login_screen.dart';
+import 'package:kossan/screen/home_screen.dart';
+import 'package:kossan/screen/login_screen.dart';
+import 'package:kossan/screen/register_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -66,7 +68,10 @@ class WelcomeScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: OutlinedButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/register');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => RegisterPage()),
+                    );
 
                     print("Register tapped");
                   },
@@ -86,7 +91,10 @@ class WelcomeScreen extends StatelessWidget {
               SizedBox(height: 20),
               GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, '/home');
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePage()),
+                  );
                   print("Continue as guest tapped");
                 },
                 child: Text(

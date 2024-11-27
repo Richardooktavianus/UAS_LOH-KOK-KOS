@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:kossan/screen/home_screen.dart';
+import 'package:kossan/screen/register_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
@@ -82,7 +84,10 @@ class LoginScreen extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Handle login
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomePage()),
+                    );
                     print("Login tapped");
                   },
                   style: ElevatedButton.styleFrom(
@@ -105,10 +110,10 @@ class LoginScreen extends StatelessWidget {
                 alignment: Alignment.center,
                 child: GestureDetector(
                   onTap: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) => RegisterScreen()),
-                    // );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => RegisterPage()),
+                    );
                     print("Register Now tapped");
                   },
                   child: RichText(
