@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:kossan/screen/home_screen.dart';
 import 'package:kossan/screen/login_screen.dart';
 
+
 class RegisterPage extends StatelessWidget {
+  const RegisterPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -11,7 +13,7 @@ class RegisterPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -20,33 +22,33 @@ class RegisterPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "Hello! Register to get started",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _buildTextField("Username"),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildTextField("Email"),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildTextField("Password", obscureText: true),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildTextField("Confirm password", obscureText: true),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
-                minimumSize: Size(double.infinity, 50),
+                minimumSize: const Size(double.infinity, 50),
               ),
-              child: Text("Register", style: TextStyle(color: Colors.white)),
+              child: const Text("Register", style: TextStyle(color: Colors.white)),
             ),
-            Spacer(),
+            const Spacer(),
             Center(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Already have an account? "),
+                  const Text("Already have an account? "),
                   GestureDetector(
                     onTap: () {
                       Navigator.pushReplacement(
@@ -54,7 +56,7 @@ class RegisterPage extends StatelessWidget {
                         MaterialPageRoute(builder: (context) => LoginScreen()),
                       );
                     },
-                    child: Text(
+                    child: const Text(
                       "Login Now",
                       style: TextStyle(
                           color: Colors.teal, fontWeight: FontWeight.bold),
@@ -63,7 +65,7 @@ class RegisterPage extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -81,7 +83,7 @@ class RegisterPage extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide.none,
         ),
-        contentPadding: EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+        contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
       ),
     );
   }

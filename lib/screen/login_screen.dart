@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:kossan/screen/home_screen.dart';
 import 'package:kossan/screen/register_screen.dart';
 
+
 class LoginScreen extends StatelessWidget {
+  const LoginScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -11,7 +14,7 @@ class LoginScreen extends StatelessWidget {
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
         ),
         backgroundColor: Colors.white,
         elevation: 0,
@@ -21,8 +24,8 @@ class LoginScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: ListView(
             children: [
-              SizedBox(height: 20),
-              Text(
+              const SizedBox(height: 20),
+              const Text(
                 "Welcome back! Glad to see you, Again!",
                 style: TextStyle(
                   fontSize: 32,
@@ -30,7 +33,7 @@ class LoginScreen extends StatelessWidget {
                   color: Colors.black,
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               Center(
                 child: Image.asset(
                   'img/logo.png',
@@ -38,7 +41,7 @@ class LoginScreen extends StatelessWidget {
                   height: 210,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               // Input email
               TextField(
                 decoration: InputDecoration(
@@ -50,7 +53,7 @@ class LoginScreen extends StatelessWidget {
                   fillColor: Colors.grey[100],
                 ),
               ),
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
               // Input password
               TextField(
                 obscureText: true,
@@ -61,10 +64,10 @@ class LoginScreen extends StatelessWidget {
                   ),
                   filled: true,
                   fillColor: Colors.grey[100],
-                  suffixIcon: Icon(Icons.visibility_off),
+                  suffixIcon: const Icon(Icons.visibility_off),
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
@@ -72,13 +75,13 @@ class LoginScreen extends StatelessWidget {
                     // Handle forgot password
                     print("Forgot Password tapped");
                   },
-                  child: Text(
+                  child: const Text(
                     "Forgot Password?",
                     style: TextStyle(color: Colors.grey),
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               // Tombol Login
               SizedBox(
                 width: double.infinity,
@@ -86,7 +89,7 @@ class LoginScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => HomePage()),
+                      MaterialPageRoute(builder: (context) => HomeScreen()),
                     );
                     print("Login tapped");
                   },
@@ -96,15 +99,15 @@ class LoginScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: Text(
+                  child: const Text(
                     "Login",
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               // Separator
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               // Register link
               Align(
                 alignment: Alignment.center,
@@ -117,7 +120,7 @@ class LoginScreen extends StatelessWidget {
                     print("Register Now tapped");
                   },
                   child: RichText(
-                    text: TextSpan(
+                    text: const TextSpan(
                       text: "Don’t have an account? ",
                       style: TextStyle(color: Colors.grey),
                       children: [

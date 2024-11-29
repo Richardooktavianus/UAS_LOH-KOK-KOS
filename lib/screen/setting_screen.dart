@@ -1,43 +1,73 @@
 import 'package:flutter/material.dart';
+import 'package:kossan/provider/theme_provider.dart';
 import 'package:provider/provider.dart';
 
-class SettingPage extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
+  @override
+  _SettingsScreenState createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  bool isDarkMode = false;
+  bool isNotificationEnabled = true;
+  String selectedLanguage = 'English';
+
   @override
   Widget build(BuildContext context) {
-
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title: Text("Settings", style: TextStyle(color: Colors.white)),
-        iconTheme: IconThemeData(color: Colors.white),
+        title: const Text('Settings'),
+        backgroundColor:
+            themeProvider.isDarkMode ? Colors.grey.shade900 : Colors.blue,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSettingOption(Icons.privacy_tip, "Privacy Policy", () {
-              // Handle privacy policy
-            }),
-            _buildSettingOption(Icons.info, "About Us", () {
-              // Handle about us
-            }),
-            Divider(thickness: 1),
-            _buildSettingOption(Icons.logout, "Logout", () {
-              // Handle logout
-            }),
-          ],
-        ),
+      body: ListView(
+        padding: const EdgeInsets.all(8.0),
+        children: [
+          SwitchListTile(
+            title: const Text('Dark Mode'),
+            subtitle: const Text('Enable dark mode for the app'),
+            value: themeProvider.isDarkMode,
+            onChanged: (bool value) {
+              setState(() {
+                themeProvider.toggleTheme(value);
+              });
+            },
+          ),
+          Divider(),
+          SwitchListTile(
+            title: const Text('Enable Notifications'),
+            subtitle: const Text('Receive updates and notifications'),
+            value: isNotificationEnabled,
+            onChanged: (bool value) {
+              setState(() {
+                isNotificationEnabled = value;
+              });
+            },
+          ),
+          Divider(),
+          ListTile(
+            title: const Text('Language'),
+            subtitle: Text(selectedLanguage),
+            trailing: DropdownButton<String>(
+              value: selectedLanguage,
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedLanguage = newValue!;
+                });
+              },
+              items: <String>['English', 'Bahasa Indonesia', 'Español']
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
+          ),
+          Divider(),
+        ],
       ),
-    );
-  }
-
-  Widget _buildSettingOption(IconData icon, String title, VoidCallback onTap) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.blue),
-      title: Text(title, style: TextStyle(fontSize: 18)),
-      trailing: Icon(Icons.arrow_forward_ios, size: 16),
-      onTap: onTap,
     );
   }
 }

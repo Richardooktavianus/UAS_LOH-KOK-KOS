@@ -8,6 +8,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -18,15 +20,18 @@ class MyApp extends StatelessWidget {
 }
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
   @override
+
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 3), () {
+    Timer(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => WelcomeScreen()),
@@ -40,12 +45,10 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Latar belakang gambar
           Image.asset(
             'img/background.jpg',
             fit: BoxFit.cover,
           ),
-          // Tambahkan elemen tambahan jika diperlukan
           Center(
             child: Image.asset(
               'img/logo.png',
@@ -60,11 +63,13 @@ class _SplashScreenState extends State<SplashScreen> {
 }
 
 class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Home Page')),
-      body: Center(child: Text('Welcome to Loh Kok Kos!')),
+      appBar: AppBar(title: const Text('Home Page')),
+      body: const Center(child: Text('Welcome to Loh Kok Kos!')),
     );
   }
 }
