@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kossan/provider/theme_provider.dart';
+import 'package:kossan/screen/home_screen.dart';
 import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -20,6 +21,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
         title: const Text('Settings'),
         backgroundColor:
             themeProvider.isDarkMode ? Colors.grey.shade900 : Colors.blue,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomeScreen()),
+            );
+          },
+        ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(8.0),
@@ -71,3 +81,4 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 }
+

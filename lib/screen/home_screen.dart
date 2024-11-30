@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:kossan/model/kamar.dart';
 import 'package:kossan/provider/theme_provider.dart';
 import 'package:kossan/screen/detil_screen.dart';
-import 'package:kossan/model/kamar.dart';
-import 'package:kossan/screen/detil_screen.dart';
+import 'package:kossan/screen/history_screen.dart';
+import 'package:kossan/screen/profile_screen.dart';
 import 'package:kossan/screen/setting_screen.dart';
+import 'package:kossan/data/data_kamar.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -16,47 +18,21 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Welcome to Loh Kok Kos!'),
-        backgroundColor: Provider.of<ThemeProvider>(context).isDarkMode
-            ? Colors.black
-            : Colors.white,
+        backgroundColor: themeProvider.isDarkMode ? Colors.black : Colors.white,
         elevation: 0,
       ),
       drawer: Drawer(
         child: ListView(
           children: [
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('Home'),
-              onTap: () {
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => const HomeScreen()));
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.search),
-              title: const Text('Search'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text('Profile'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => SettingsScreen()));
-              },
-            ),
+            _buildDrawerItem(Icons.home, 'Home', const HomeScreen()),
+            _buildDrawerItem(Icons.history, 'History', HistoryScreen()),
+            _buildDrawerItem(Icons.person, 'Profile', const ProfileScreen()),
+            _buildDrawerItem(Icons.favorite, 'Favorites', const HomeScreen()),
+            _buildDrawerItem(Icons.settings, 'Settings', SettingsScreen()),
           ],
         ),
       ),
@@ -66,71 +42,9 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Search address, or near you',
-                        prefixIcon: const Icon(Icons.search),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              _buildSearchBar(),
               const SizedBox(height: 20),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Near from you',
-                      style: Theme.of(context).textTheme.titleLarge),
-                  TextButton(onPressed: () {}, child: const Text('See more')),
-                ],
-              ),
-              SizedBox(
-                height: 200,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    _buildPropertyCard(
-                        'Dreamsville House', '1.8 km', 'rumah2.jpg'),
-                    _buildPropertyCard('Ascot House', '2.0 km', 'rumah.jpg'),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Best for you',
-                      style: Theme.of(context).textTheme.titleLarge),
-                  TextButton(onPressed: () {}, child: const Text('See more')),
-                ],
-              ),
-              Column(
-                children: [
-                  _buildPropertyListTile(
-                      'Orchard House',
-                      'Rp. 2.500.000.000/Year',
-                      '6 Bedroom | 4 Bathroom',
-                      'kamar1.jpg'),
-                  _buildPropertyListTile(
-                      'The Hollies House',
-                      'Rp. 2.000.000.000/Year',
-                      '5 Bedroom | 2 Bathroom',
-                      'kamar2.jpg'),
-                  _buildPropertyListTile(
-                      'Sea Breezes House',
-                      'Rp. 900.000.000/Year',
-                      '2 Bedroom | 2 Bathroom',
-                      'kamar3.jpg'),
-                ],
-              ),
+              _buildGridView(),
             ],
           ),
         ),
@@ -138,86 +52,131 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildCategoryChip(String label, bool isSelected) {
-    return Chip(
-      label: Text(label),
-      backgroundColor: isSelected ? Colors.blue : Colors.grey[300],
-      labelStyle: TextStyle(
-        color: isSelected ? Colors.white : Colors.black,
-      ),
+  Widget _buildDrawerItem(IconData icon, String title, Widget? screen) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title),
+      onTap: () {
+        if (screen != null) {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => screen));
+        } else {
+          Navigator.pop(context);
+        }
+      },
     );
   }
 
-  Widget _buildPropertyCard(String title, String distance, String imagePath) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                DetailScreen(title: title, imagePath: imagePath),
-          ),
-        );
-      },
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(15)),
-              child: imagePath.isNotEmpty
-                  ? Image.asset(
-                      'img/$imagePath',
-                      fit: BoxFit.cover,
-                      height: 120,
-                      width: 160,
-                    )
-                  : Container(
-                      height: 120,
-                      width: 160,
-                      color: Colors.grey[300],
-                    ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
-                  Text(distance, style: const TextStyle(color: Colors.grey)),
-                ],
+  Widget _buildSearchBar() {
+    return Row(
+      children: [
+        const SizedBox(width: 16),
+        Expanded(
+          child: TextField(
+            decoration: InputDecoration(
+              hintText: 'Search',
+              prefixIcon: const Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
               ),
             ),
-          ],
+            onSubmitted: (value) {
+              searchProduct(value);
+            },
+          ),
         ),
-      ),
+      ],
     );
   }
 
-  Widget _buildPropertyListTile(
-      String title, String price, String specs, String imagePath) {
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                DetailScreen(title: title, imagePath: imagePath),
+  void searchProduct(String keyword) {
+    final List<Product> kamarList = DataKamar.dataKamar
+        .where((element) =>
+            element.title.toLowerCase().contains(keyword.toLowerCase()))
+        .toList();
+
+    if (kamarList.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Product not found')),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DetailScreen(kamar: kamarList.first),
+        ),
+      );
+    }
+  }
+
+  Widget _buildGridView() {
+    final List<Product> kamarList = DataKamar.dataKamar;
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 16,
+        crossAxisSpacing: 16,
+        childAspectRatio: 0.9,
+      ),
+      itemCount: kamarList.length,
+      itemBuilder: (context, index) {
+        final kamar = kamarList[index];
+
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DetailScreen(kamar: kamar),
+              ),
+            );
+          },
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            elevation: 4,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(15)),
+                  child: Image.asset(
+                    'img/${kamar.imagePath}',
+                    fit: BoxFit.cover,
+                    height: 120,
+                    width: double.infinity,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        kamar.title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Rp ${kamar.price}',
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
-      child: ListTile(
-        leading: Image.asset('img/$imagePath',
-            width: 70, height: 70, fit: BoxFit.cover),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text('$price\n$specs'),
-        isThreeLine: true,
-      ),
     );
   }
 }

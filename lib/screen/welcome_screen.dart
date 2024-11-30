@@ -93,24 +93,6 @@ class WelcomeScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomeScreen()),
-                  );
-                  print("Continue as guest tapped");
-                },
-                child: const Text(
-                  'Continue as a guest',
-                  style: TextStyle(
-                    color: Colors.teal,
-                    fontSize: 16,
-                    decoration: TextDecoration.underline,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 40),
             ],
           ),
         ],
