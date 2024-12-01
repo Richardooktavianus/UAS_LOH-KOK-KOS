@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kossan/model/kamar.dart';
 import 'package:kossan/provider/theme_provider.dart';
 import 'package:kossan/screen/detil_screen.dart';
+import 'package:kossan/screen/favorites_screen.dart';
 import 'package:kossan/screen/history_screen.dart';
 import 'package:kossan/screen/profile_screen.dart';
 import 'package:kossan/screen/setting_screen.dart';
@@ -31,7 +32,8 @@ class _HomeScreenState extends State<HomeScreen> {
             _buildDrawerItem(Icons.home, 'Home', const HomeScreen()),
             _buildDrawerItem(Icons.history, 'History', HistoryScreen()),
             _buildDrawerItem(Icons.person, 'Profile', const ProfileScreen()),
-            _buildDrawerItem(Icons.favorite, 'Favorites', const HomeScreen()),
+            _buildDrawerItem(
+                Icons.favorite, 'Favorites', const FavoritesScreen()),
             _buildDrawerItem(Icons.settings, 'Settings', SettingsScreen()),
           ],
         ),

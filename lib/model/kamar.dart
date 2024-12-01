@@ -14,4 +14,14 @@ class Product {
     required this.image,
     required this.imagePath,
   });
+
+   @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is Product && other.title == title;
+  }
+
+  @override
+  int get hashCode => title.hashCode;
 }
+

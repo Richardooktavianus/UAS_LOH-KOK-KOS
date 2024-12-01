@@ -1,5 +1,9 @@
+// screens/detail_screen.dart
 import 'package:flutter/material.dart';
 import 'package:kossan/model/kamar.dart';
+import 'package:kossan/screen/booking_screen.dart';
+import 'package:kossan/provider/favorites_provider.dart';
+import 'package:provider/provider.dart';
 
 class DetailScreen extends StatefulWidget {
   final Product kamar;
@@ -14,9 +18,26 @@ class _DetailScreenState extends State<DetailScreen> {
   bool isFavorited = false;
 
   void toggleFavorite() {
+    final favoriteProvider =
+        Provider.of<FavoritesProvider>(context, listen: false);
+
     setState(() {
+      if (isFavorited) {
+        favoriteProvider.removeFavorite(widget.kamar);
+      } else {
+        favoriteProvider.addFavorite(widget.kamar);
+      }
       isFavorited = !isFavorited;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Check if the room is already in the favorites list
+    final favoriteProvider =
+        Provider.of<FavoritesProvider>(context, listen: false);
+    isFavorited = favoriteProvider.favoriteRooms.contains(widget.kamar);
   }
 
   @override
@@ -28,7 +49,7 @@ class _DetailScreenState extends State<DetailScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
@@ -58,27 +79,27 @@ class _DetailScreenState extends State<DetailScreen> {
             const SizedBox(height: 16),
             Text(
               kamar.title,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Text(
               'Price: Rp ${kamar.price}',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
             Text(
               kamar.description,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
             Text(
               'Facilities',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
+              children: const [
                 Icon(Icons.wifi, color: Colors.blue),
                 Icon(Icons.restaurant, color: Colors.blue),
                 Icon(Icons.pool, color: Colors.blue),
@@ -90,15 +111,21 @@ class _DetailScreenState extends State<DetailScreen> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.teal,
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 onPressed: () {
-                  // Tambahkan logika pemesanan di sini
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BookingScreen(kamar: kamar),
+                    ),
+                  );
                 },
-                child: Text(
+                child: const Text(
                   'Book Now',
                   style: TextStyle(
                       fontSize: 18,
