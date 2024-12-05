@@ -1,9 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kossan/model/booking_model.dart';
 import 'package:kossan/model/kamar.dart';
 import 'package:kossan/screen/detail_booking_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:kossan/provider/booking_provider.dart';
+import 'package:kossan/provider/theme_provider.dart';
 
 class BookingScreen extends StatefulWidget {
   final Product kamar;
@@ -88,8 +89,8 @@ class _BookingScreenState extends State<BookingScreen> {
               Center(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 32, vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -104,16 +105,45 @@ class _BookingScreenState extends State<BookingScreen> {
                       status: 'Confirmed',
                     );
 
-                    Provider.of<BookingProvider>(context, listen: false)
-                        .addBooking(booking);
+                    // Save the booking data to Firestore
 
+                    try {
+                      // Saving to Firestore
+                      await FirebaseFirestore.instance
+                          .collection('bookings')
+                          .add(booking.toMap());
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Booking Confirmed')));
+
+                      // Navigate to booking details screen
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DetailBookingScreen(
+                            kamar: widget.kamar,
+                            checkInDate: checkInDate,
+                            checkOutDate: checkOutDate,
+                            booking: booking,
+                          ),
+                        ),
+                      );
+                    } catch (e) {
+                      {
+                        // Catch any errors during the Firestore operation
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(SnackBar(content: Text('Error: $e')));
+                      }
+                    }
+
+                    // Navigate to booking details screen
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => DetailBookingScreen(
                           kamar: widget.kamar,
                           checkInDate: checkInDate,
-                          checkOutDate: checkOutDate, booking: booking,
+                          checkOutDate: checkOutDate,
+                          booking: booking,
                         ),
                       ),
                     );
@@ -131,7 +161,8 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  Widget _buildDateField({required String label, required DateTime selectedDate}) {
+  Widget _buildDateField(
+      {required String label, required DateTime selectedDate}) {
     return GestureDetector(
       onTap: () async {
         final DateTime? picked = await showDatePicker(

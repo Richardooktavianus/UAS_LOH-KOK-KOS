@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kossan/provider/profile_provider.dart';
 import 'package:provider/provider.dart';
@@ -13,27 +14,39 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late String _email;
   late String _phone;
 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   @override
   void initState() {
     super.initState();
-    final profileProvider =
-        Provider.of<ProfileProvider>(context, listen: false);
+    final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
     _name = profileProvider.name;
     _email = profileProvider.email;
+    _phone = ''; // Assuming you will implement phone number separately
   }
 
-  void _saveProfile() {
+  void _saveProfile() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      Provider.of<ProfileProvider>(context, listen: false)
-          .updateProfile(_name, _email);
+      try {
+        // Update the display name
+        User? user = _auth.currentUser;
+        if (user != null) {
+          await user.updateDisplayName(_name);
+          await user.updateEmail(_email);
+        }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profile updated successfully!')),
-      );
+        // Optionally handle phone number updates (not implemented here)
+        // If you want to update the phone, it will require a re-authentication process
 
-      Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profile updated successfully!')),
+        );
+        Navigator.pop(context);
+      } on FirebaseAuthException catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message!)));
+      }
     }
   }
 
@@ -43,7 +56,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       appBar: AppBar(
         title: const Text('Edit Profile'),
         backgroundColor: Colors.teal,
-        
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -51,6 +63,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           key: _formKey,
           child: ListView(
             children: [
+              // Name input
               TextFormField(
                 initialValue: _name,
                 decoration: const InputDecoration(labelText: 'Name'),
@@ -63,11 +76,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 onSaved: (value) => _name = value!,
               ),
               const SizedBox(height: 16),
+              
+              // Email input
               TextFormField(
                 initialValue: _email,
                 decoration: const InputDecoration(labelText: 'Email'),
                 validator: (value) {
-                  if (value == null || !value.contains('@')) {
+                  if (value == null || value.isEmpty || !value.contains('@')) {
                     return 'Please enter a valid email';
                   }
                   return null;
@@ -75,7 +90,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 onSaved: (value) => _email = value!,
               ),
               const SizedBox(height: 16),
+              // Phone input (Optional)
+              TextFormField(
+                initialValue: _phone,
+                decoration: const InputDecoration(labelText: 'Phone (Optional)'),
+                keyboardType: TextInputType.phone,
+                onSaved: (value) => _phone = value!,
+              ),
               const SizedBox(height: 24),
+              // Save Changes Button
               ElevatedButton(
                 onPressed: _saveProfile,
                 style: ElevatedButton.styleFrom(

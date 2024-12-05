@@ -1,9 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:kossan/screen/login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
+
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> _register() async {
+    if (_passwordController.text != _confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Passwords do not match, please try again')));
+      return;
+    }
+
+    try {
+      await _auth.createUserWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Registration Successful')));
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+      );
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.message!)));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,21 +61,32 @@ class RegisterPage extends StatelessWidget {
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
-            _buildTextField("Username"),
+            _buildTextField(
+              controller: _emailController,
+              hintText: "Enter your email",
+              obscureText: false,
+            ),
             const SizedBox(height: 16),
-            _buildTextField("Email"),
+            _buildTextField(
+              controller: _passwordController,
+              hintText: "Enter your password",
+              obscureText: true,
+            ),
             const SizedBox(height: 16),
-            _buildTextField("Password", obscureText: true),
-            const SizedBox(height: 16),
-            _buildTextField("Confirm password", obscureText: true),
+            _buildTextField(
+              controller: _confirmPasswordController,
+              hintText: "Confirm your password",
+              obscureText: true,
+            ),
             const SizedBox(height: 24),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: _register,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
                 minimumSize: const Size(double.infinity, 50),
               ),
-              child: const Text("Register", style: TextStyle(color: Colors.white)),
+              child:
+                  const Text("Register", style: TextStyle(color: Colors.white)),
             ),
             const Spacer(),
             Center(
@@ -72,8 +117,13 @@ class RegisterPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTextField(String hintText, {bool obscureText = false}) {
+  Widget _buildTextField({
+    required String hintText,
+    required TextEditingController controller,
+    bool obscureText = false,
+  }) {
     return TextField(
+      controller: controller,
       obscureText: obscureText,
       decoration: InputDecoration(
         hintText: hintText,
@@ -83,7 +133,8 @@ class RegisterPage extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide.none,
         ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
       ),
     );
   }

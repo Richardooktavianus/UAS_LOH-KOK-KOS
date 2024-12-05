@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kossan/model/kamar.dart';
 import 'package:kossan/provider/theme_provider.dart';
@@ -266,10 +267,33 @@ class _HomeScreenState extends State<HomeScreen> {
                       'assets/profile.jpg'), // Sesuaikan dengan aset Anda
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  'Welcome, User',
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
+                FutureBuilder<User?>(
+                  future: FirebaseAuth.instance.authStateChanges().first,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (snapshot.hasError) {
+                      return const Text(
+                        'Error fetching user',
+                        style: TextStyle(color: Colors.red, fontSize: 16),
+                      );
+                    } else if (snapshot.hasData && snapshot.data != null) {
+                      final user = snapshot.data!;
+                      return Text(
+                        'Welcome, ${user.displayName ?? user.email ?? 'User'}',
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 18),
+                      );
+                    } else {
+                      return const Text(
+                        'No user signed in',
+                        style: TextStyle(color: Colors.red, fontSize: 16),
+                      );
+                    }
+                  },
+                )
               ],
             ),
           ),

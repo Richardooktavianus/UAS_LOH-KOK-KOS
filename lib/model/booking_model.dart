@@ -12,4 +12,15 @@ class Booking {
     required this.checkOutDate,
     required this.status,
   });
+
+  // Convert the Booking instance to a map for Firestore
+  Map<String, dynamic> toMap() {
+    return {
+      'roomTitle': roomTitle,
+      'price': price,
+      'checkInDate': checkInDate,
+      'checkOutDate': checkOutDate,
+      'status': status,
+    };
+  }
 }

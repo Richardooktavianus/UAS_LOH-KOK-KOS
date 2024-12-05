@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kossan/firebase_options.dart';
 import 'package:kossan/provider/booking_provider.dart';
 import 'package:kossan/provider/favorites_provider.dart';
+import 'package:kossan/provider/profile_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:kossan/provider/theme_provider.dart';
 import 'package:kossan/screen/splash_screen.dart';
@@ -18,6 +19,8 @@ void main() async{
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (context) => FavoritesProvider(),),
         ChangeNotifierProvider(create: (context) => BookingProvider(),),
+        ChangeNotifierProvider(create: (context) => ProfileProvider(),),
+
       ],
       child: const MyApp(),
     ),

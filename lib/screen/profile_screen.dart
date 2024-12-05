@@ -1,10 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kossan/provider/theme_provider.dart';
 import 'package:kossan/screen/home_screen.dart';
 import 'package:kossan/screen/edit_profile_screen.dart';
 import 'package:kossan/screen/setting_screen.dart';
 import 'package:kossan/screen/welcome_screen.dart';
-import 'package:kossan/provider/profile_provider.dart';
 import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -12,8 +12,8 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final profileProvider = Provider.of<ProfileProvider>(context);
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
       body: Stack(
@@ -34,7 +34,7 @@ class ProfileScreen extends StatelessWidget {
           SafeArea(
             child: Column(
               children: [
-                // AppBar Custom
+                // Custom AppBar
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Row(
@@ -45,19 +45,19 @@ class ProfileScreen extends StatelessWidget {
                         onPressed: () {
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(
-                                builder: (context) => HomeScreen()),
+                            MaterialPageRoute(builder: (context) => const HomeScreen()),
                           );
                         },
                       ),
                       const Text(
                         'Profile',
                         style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold),
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      const SizedBox(width: 48), // Placeholder for alignment
+                      const SizedBox(width: 48),
                     ],
                   ),
                 ),
@@ -68,20 +68,19 @@ class ProfileScreen extends StatelessWidget {
                     children: [
                       CircleAvatar(
                         radius: 50,
-                        backgroundImage: AssetImage(
-                            'assets/images/profile_pic.jpg'), // Tambahkan path gambar Anda
+                        backgroundImage: user?.photoURL != null
+                            ? NetworkImage(user!.photoURL!)
+                            : const AssetImage('assets/images/profile_pic.jpg') as ImageProvider,
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        profileProvider.name,
-                        style: const TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.bold),
+                        user?.displayName ?? user?.email?.split('@').first ?? 'User',
+                        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        profileProvider.email,
-                        style:
-                            const TextStyle(fontSize: 16, color: Colors.grey),
+                        user?.email ?? 'user@example.com',
+                        style: const TextStyle(fontSize: 16, color: Colors.grey),
                       ),
                       const SizedBox(height: 32),
                     ],
@@ -93,9 +92,7 @@ class ProfileScreen extends StatelessWidget {
                     margin: const EdgeInsets.only(top: 32),
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     decoration: BoxDecoration(
-                      color: themeProvider.isDarkMode
-                          ? Colors.grey[850]
-                          : Colors.white,
+                      color: themeProvider.isDarkMode ? Colors.grey[850] : Colors.white,
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(30),
                         topRight: Radius.circular(30),
@@ -110,55 +107,34 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     child: ListView(
                       children: [
-                        ListTile(
-                          leading: Icon(Icons.edit,
-                              color: themeProvider.isDarkMode
-                                  ? Colors.white
-                                  : Colors.teal),
-                          title: const Text('Edit Profile'),
-                          trailing: const Icon(Icons.arrow_forward_ios),
+                        _buildMenuOption(
+                          icon: Icons.edit,
+                          title: 'Edit Profile',
                           onTap: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                  builder: (context) => EditProfileScreen()),
+                              MaterialPageRoute(builder: (context) => EditProfileScreen()),
                             );
                           },
-                          tileColor: themeProvider.isDarkMode
-                              ? Colors.grey[850]
-                              : Colors.white,
+                          themeProvider: themeProvider,
                         ),
-                        ListTile(
-                          leading: Icon(Icons.settings,
-                              color: themeProvider.isDarkMode
-                                  ? Colors.white
-                                  : Colors.teal),
-                          title: const Text('Setting'),
-                          trailing: const Icon(Icons.arrow_forward_ios),
+                        _buildMenuOption(
+                          icon: Icons.settings,
+                          title: 'Settings',
                           onTap: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                  builder: (context) => SettingsScreen()),
+                              MaterialPageRoute(builder: (context) => SettingsScreen()),
                             );
                           },
-                          tileColor: themeProvider.isDarkMode
-                              ? Colors.grey[850]
-                              : Colors.white,
+                          themeProvider: themeProvider,
                         ),
-                        ListTile(
-                          leading: Icon(Icons.logout,
-                              color: themeProvider.isDarkMode
-                                  ? Colors.white
-                                  : Colors.red),
-                          title: const Text('Log Out'),
-                          trailing: const Icon(Icons.arrow_forward_ios),
-                          onTap: () {
-                            _showLogoutDialog(context);
-                          },
-                          tileColor: themeProvider.isDarkMode
-                              ? Colors.grey[850]
-                              : Colors.white,
+                        _buildMenuOption(
+                          icon: Icons.logout,
+                          title: 'Log Out',
+                          onTap: () => _showLogoutDialog(context),
+                          themeProvider: themeProvider,
+                          color: Colors.red,
                         ),
                       ],
                     ),
@@ -172,14 +148,27 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildMenuOption({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+    required ThemeProvider themeProvider,
+    Color color = Colors.teal,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: themeProvider.isDarkMode ? Colors.white : color),
+      title: Text(title),
+      trailing: const Icon(Icons.arrow_forward_ios),
+      onTap: onTap,
+    );
+  }
+
   void _showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15.0),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
           title: Row(
             children: const [
               Icon(Icons.warning, color: Colors.red),
@@ -187,32 +176,24 @@ class ProfileScreen extends StatelessWidget {
               Text('Logout Confirmation'),
             ],
           ),
-          content: const Text(
-            'Are you sure you want to log out?',
-            style: TextStyle(fontSize: 16),
-          ),
+          content: const Text('Are you sure you want to log out?', style: TextStyle(fontSize: 16)),
           actions: [
             ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey[300],
-                foregroundColor: Colors.black,
-              ),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.grey[300], foregroundColor: Colors.black),
               child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-              ),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
               child: const Text('Yes'),
-              onPressed: () {
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
                 Navigator.of(context).pop();
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => WelcomeScreen()),
+                  MaterialPageRoute(builder: (context) => const WelcomeScreen()),
                   (Route<dynamic> route) => false,
                 );
               },

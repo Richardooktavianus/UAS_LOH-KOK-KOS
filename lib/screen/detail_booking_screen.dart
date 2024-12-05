@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kossan/model/booking_model.dart';
 import 'package:kossan/model/kamar.dart';
@@ -137,10 +138,29 @@ class DetailBookingScreen extends StatelessWidget {
               const SizedBox(height: 40),
               Center(
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
+                  onPressed: () async {
+                    final booking = Booking(
+                      roomTitle: kamar.title,
+                      price: kamar.price,
+                      checkInDate: checkInDate,
+                      checkOutDate: checkOutDate,
+                      status: 'Confirmed',
+                    );
+
+                    // Save the booking data to Firestore
+                    await FirebaseFirestore.instance.collection('bookings').add(
+                      booking.toMap(),
+                    );
+
+                    // Show success message
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Booking Confirmed')));
+
+                    Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => BayarSplash()),
+                      MaterialPageRoute(
+                        builder: (context) => BayarSplash(),
+                      ),
                     );
                   },
                   style: ElevatedButton.styleFrom(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:kossan/model/kamar.dart';
 import 'package:kossan/provider/favorites_provider.dart';
 import 'package:kossan/provider/theme_provider.dart';
 import 'package:kossan/screen/detil_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kossan/screen/home_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -12,13 +12,23 @@ class FavoritesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    final favoriteRooms = Provider.of<FavoritesProvider>(context).favoriteRooms;
+    final favoritesProvider = Provider.of<FavoritesProvider>(context);
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final crossAxisCount = screenWidth > 600 ? 3 : 2;
+    final aspectRatio =
+        screenWidth > 600 ? 0.65 : 0.75; // Adjust based on screen size
+
+    if (userId != null) {
+      favoritesProvider.fetchFavorites(userId);
+    }
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Favorites'),
-        backgroundColor:
-            themeProvider.isDarkMode ? Colors.grey[900] : Colors.teal,
+        backgroundColor: themeProvider.isDarkMode
+            ? Colors.grey[900]
+            : Colors.teal, // Fixed background color
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -29,13 +39,8 @@ class FavoritesScreen extends StatelessWidget {
           },
         ),
       ),
-      body: favoriteRooms.isEmpty
-          ? const Center(
-              child: Text(
-                'No favorite rooms added.',
-                style: TextStyle(fontSize: 18, color: Colors.grey),
-              ),
-            )
+      body: favoritesProvider.favoriteRooms.isEmpty
+          ? const Center(child: Text('No favorite rooms added.'))
           : Container(
               decoration: BoxDecoration(
                 color: themeProvider.isDarkMode
@@ -44,15 +49,15 @@ class FavoritesScreen extends StatelessWidget {
               ),
               child: GridView.builder(
                 padding: const EdgeInsets.all(16.0),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossAxisCount,
                   mainAxisSpacing: 16.0,
                   crossAxisSpacing: 16.0,
-                  childAspectRatio: 3 / 4,
+                  childAspectRatio: aspectRatio, // Dynamic aspect ratio
                 ),
-                itemCount: favoriteRooms.length,
+                itemCount: favoritesProvider.favoriteRooms.length,
                 itemBuilder: (context, index) {
-                  final room = favoriteRooms[index];
+                  final room = favoritesProvider.favoriteRooms[index];
                   return GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -62,51 +67,46 @@ class FavoritesScreen extends StatelessWidget {
                         ),
                       );
                     },
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      elevation: 6, // Reduced elevation for a softer look
-                      shadowColor: Colors.black.withOpacity(0.2),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ClipRRect(
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(15),
-                              topRight: Radius.circular(15),
-                            ),
-                            child: AspectRatio(
-                              aspectRatio: 3 / 2,
-                              child: Image.asset(
-                                'img/${room.imagePath}',
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                errorBuilder: (context, error, stackTrace) {
-                                  // Fallback in case of error
-                                  return Image.asset(
-                                    'assets/default_image.png',
-                                    fit: BoxFit.cover,
-                                  );
-                                },
-                              ),
-                            ),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        double cardWidth = constraints.maxWidth;
+                        return Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              room.title,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: themeProvider.isDarkMode
-                                    ? Colors.white
-                                    : Colors.black87,
+                          elevation: 6, // Reduced elevation for a softer look
+                          shadowColor: themeProvider.isDarkMode
+                              ? Colors.grey[800]!.withOpacity(0.2)
+                              : Colors.black.withOpacity(0.2),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ClipRRect(
+                                borderRadius: const BorderRadius.vertical(
+                                    top: Radius.circular(10)),
+                                child: Image.asset(
+                                  'img/${room.imagePath}',
+                                  fit: BoxFit.cover,
+                                  height: cardWidth * 1,
+                                  width: double.infinity,
+                                ),
                               ),
-                            ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  room.title,
+                                  style: TextStyle(
+                                    color: themeProvider.isDarkMode
+                                        ? Colors.white
+                                        : Colors.black87,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
                   );
                 },
