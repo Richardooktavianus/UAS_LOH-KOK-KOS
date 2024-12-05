@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:kossan/screen/forgot_screen.dart';
 import 'package:kossan/screen/home_screen.dart';
 import 'package:kossan/screen/register_screen.dart';
-
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -16,7 +16,7 @@ class LoginScreen extends StatelessWidget {
           },
           icon: const Icon(Icons.arrow_back, color: Colors.black),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: SafeArea(
@@ -28,7 +28,7 @@ class LoginScreen extends StatelessWidget {
               const Text(
                 "Welcome back! Glad to see you, Again!",
                 style: TextStyle(
-                  fontSize: 32,
+                  fontSize: 30,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
@@ -37,43 +37,34 @@ class LoginScreen extends StatelessWidget {
               Center(
                 child: Image.asset(
                   'img/logo.png',
-                  width: 264,
-                  height: 210,
+                  width: 200,
+                  height: 150,
                 ),
               ),
               const SizedBox(height: 20),
               // Input email
-              TextField(
-                decoration: InputDecoration(
-                  hintText: "Enter your email",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey[100],
-                ),
+              _buildTextField(
+                hintText: "Enter your email",
+                obscureText: false,
               ),
               const SizedBox(height: 15),
               // Input password
-              TextField(
+              _buildTextField(
+                hintText: "Enter your password",
                 obscureText: true,
-                decoration: InputDecoration(
-                  hintText: "Enter your password",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey[100],
-                  suffixIcon: const Icon(Icons.visibility_off),
-                ),
+                suffixIcon: const Icon(Icons.visibility_off),
               ),
               const SizedBox(height: 10),
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () {
-                    // Handle forgot password
-                    print("Forgot Password tapped");
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SetNewPasswordScreen(),
+                      ),
+                    );
                   },
                   child: const Text(
                     "Forgot Password?",
@@ -82,7 +73,7 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              // Tombol Login
+              // Login button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -91,10 +82,11 @@ class LoginScreen extends StatelessWidget {
                       context,
                       MaterialPageRoute(builder: (context) => HomeScreen()),
                     );
-                    print("Login tapped");
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
+                    backgroundColor: Colors.teal,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 50, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -117,7 +109,6 @@ class LoginScreen extends StatelessWidget {
                       context,
                       MaterialPageRoute(builder: (context) => RegisterPage()),
                     );
-                    print("Register Now tapped");
                   },
                   child: RichText(
                     text: const TextSpan(
@@ -139,6 +130,26 @@ class LoginScreen extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  // Helper function to build the text fields with common styles
+  Widget _buildTextField({
+    required String hintText,
+    required bool obscureText,
+    Widget? suffixIcon,
+  }) {
+    return TextField(
+      obscureText: obscureText,
+      decoration: InputDecoration(
+        hintText: hintText,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        filled: true,
+        fillColor: Colors.grey[100],
+        suffixIcon: suffixIcon,
       ),
     );
   }

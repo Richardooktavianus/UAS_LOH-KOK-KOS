@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kossan/provider/theme_provider.dart';
-import 'package:kossan/screen/home_screen.dart';
+import 'package:kossan/screen/profile_screen.dart';
 import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -26,14 +26,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
           onPressed: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => HomeScreen()),
+              MaterialPageRoute(builder: (context) => ProfileScreen()),
             );
           },
         ),
       ),
       body: ListView(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(16.0),
         children: [
+          // Dark Mode Toggle
+          _buildSectionTitle("Appearance"),
           SwitchListTile(
             title: const Text('Dark Mode'),
             subtitle: const Text('Enable dark mode for the app'),
@@ -43,8 +45,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 themeProvider.toggleTheme(value);
               });
             },
+            activeColor: Colors.blueAccent,
+            activeTrackColor: Colors.blue.withOpacity(0.4),
+            inactiveThumbColor: Colors.grey,
+            inactiveTrackColor: Colors.grey.shade300,
           ),
-          Divider(),
+          const Divider(),
+
+          // Notification Toggle
           SwitchListTile(
             title: const Text('Enable Notifications'),
             subtitle: const Text('Receive updates and notifications'),
@@ -54,8 +62,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 isNotificationEnabled = value;
               });
             },
+            activeColor: Colors.greenAccent,
+            activeTrackColor: Colors.green.withOpacity(0.4),
+            inactiveThumbColor: Colors.grey,
+            inactiveTrackColor: Colors.grey.shade300,
           ),
-          Divider(),
+          const Divider(),
+
+          // Language Selection Dropdown
+          _buildSectionTitle("Language Preferences"),
           ListTile(
             title: const Text('Language'),
             subtitle: Text(selectedLanguage),
@@ -73,12 +88,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   child: Text(value),
                 );
               }).toList(),
+              icon: const Icon(Icons.arrow_drop_down),
+              style: TextStyle(
+                  color: Provider.of<ThemeProvider>(context).isDarkMode
+                      ? Colors.white
+                      : Colors.black87),
             ),
           ),
-          Divider(),
+          const Divider(),
         ],
       ),
     );
   }
-}
 
+  // Custom section header to make it more elegant
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: Colors.teal,
+        ),
+      ),
+    );
+  }
+}
