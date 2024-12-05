@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kossan/screen/forgot_screen.dart';
 import 'package:kossan/screen/home_screen.dart';
 import 'package:kossan/screen/register_screen.dart';
+import 'package:kossan/screen/welcome_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -12,7 +13,10 @@ class LoginScreen extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+            );
           },
           icon: const Icon(Icons.arrow_back, color: Colors.black),
         ),

@@ -323,11 +323,6 @@ class _HomeScreenState extends State<HomeScreen> {
             title: const Text('Logout'),
             onTap: () {
               _showLogoutDialog(context);
-              Navigator.of(context).pop();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-              );
             },
           ),
         ],
@@ -353,7 +348,11 @@ class _HomeScreenState extends State<HomeScreen> {
               child: const Text("Logout"),
               onPressed: () {
                 Navigator.of(context).pop();
-                // Tambahkan logika logout di sini
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
+                  (Route<dynamic> route) => false,
+                );
               },
             ),
           ],
