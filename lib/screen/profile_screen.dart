@@ -45,7 +45,8 @@ class ProfileScreen extends StatelessWidget {
                         onPressed: () {
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (context) => const HomeScreen()),
+                            MaterialPageRoute(
+                                builder: (context) => const HomeScreen()),
                           );
                         },
                       ),
@@ -70,17 +71,22 @@ class ProfileScreen extends StatelessWidget {
                         radius: 50,
                         backgroundImage: user?.photoURL != null
                             ? NetworkImage(user!.photoURL!)
-                            : const AssetImage('assets/images/profile_pic.jpg') as ImageProvider,
+                            : const AssetImage('img/profile_pic.jpg')
+                                as ImageProvider,
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        user?.displayName ?? user?.email?.split('@').first ?? 'User',
-                        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                        user?.displayName ??
+                            user?.email?.split('@').first ??
+                            'User',
+                        style: const TextStyle(
+                            fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         user?.email ?? 'user@example.com',
-                        style: const TextStyle(fontSize: 16, color: Colors.grey),
+                        style:
+                            const TextStyle(fontSize: 16, color: Colors.grey),
                       ),
                       const SizedBox(height: 32),
                     ],
@@ -92,7 +98,9 @@ class ProfileScreen extends StatelessWidget {
                     margin: const EdgeInsets.only(top: 32),
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     decoration: BoxDecoration(
-                      color: themeProvider.isDarkMode ? Colors.grey[850] : Colors.white,
+                      color: themeProvider.isDarkMode
+                          ? Colors.grey[850]
+                          : Colors.white,
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(30),
                         topRight: Radius.circular(30),
@@ -113,7 +121,8 @@ class ProfileScreen extends StatelessWidget {
                           onTap: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => EditProfileScreen()),
+                              MaterialPageRoute(
+                                  builder: (context) => EditProfileScreen()),
                             );
                           },
                           themeProvider: themeProvider,
@@ -124,7 +133,8 @@ class ProfileScreen extends StatelessWidget {
                           onTap: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => SettingsScreen()),
+                              MaterialPageRoute(
+                                  builder: (context) => SettingsScreen()),
                             );
                           },
                           themeProvider: themeProvider,
@@ -156,7 +166,8 @@ class ProfileScreen extends StatelessWidget {
     Color color = Colors.teal,
   }) {
     return ListTile(
-      leading: Icon(icon, color: themeProvider.isDarkMode ? Colors.white : color),
+      leading:
+          Icon(icon, color: themeProvider.isDarkMode ? Colors.white : color),
       title: Text(title),
       trailing: const Icon(Icons.arrow_forward_ios),
       onTap: onTap,
@@ -168,7 +179,8 @@ class ProfileScreen extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
           title: Row(
             children: const [
               Icon(Icons.warning, color: Colors.red),
@@ -176,24 +188,29 @@ class ProfileScreen extends StatelessWidget {
               Text('Logout Confirmation'),
             ],
           ),
-          content: const Text('Are you sure you want to log out?', style: TextStyle(fontSize: 16)),
+          content: const Text('Are you sure you want to log out?',
+              style: TextStyle(fontSize: 16)),
           actions: [
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.grey[300], foregroundColor: Colors.black),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey[300],
+                  foregroundColor: Colors.black),
               child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red, foregroundColor: Colors.white),
               child: const Text('Yes'),
               onPressed: () async {
                 await FirebaseAuth.instance.signOut();
                 Navigator.of(context).pop();
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const WelcomeScreen()),
                   (Route<dynamic> route) => false,
                 );
               },
